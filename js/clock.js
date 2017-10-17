@@ -17,13 +17,17 @@ function start() {
     let dateTime = currentOhareanTime();
     timeElement.innerText = convertTimeToString(dateTime);
     dateElement.innerText = convertDateToString(dateTime);
+    console.log('init datetime:',dateTime);
     setInterval(function(){
         updateAll();
     }, 1);
 }
 
 function getCurrentTime(){
-    return new Date();
+    let date = new Date();
+    date.setMonth(1);
+    date.setFullYear(2018);
+    return date;
 }
 
 function updateAll(){
@@ -139,7 +143,12 @@ function getEquinoxOffsetMillis(){
 }
 
 function getDaysFromEquinox(){
-    let value = getCurrentDayOfYear() - getEquinoxOffsetDays();
+    let day = getCurrentDayOfYear();
+    if(day < getEquinoxOffsetDays()){
+        value = 365 - getEquinoxOffsetDays();
+    } else {
+        let value = day - getEquinoxOffsetDays();
+    }
     return value;
 }
 
@@ -152,7 +161,13 @@ function getMilliOfYear() {
 }
 
 function getMillisFromEquinox(){
-    let value = getMilliOfYear() - getEquinoxOffsetMillis();
+    let milliOfYear = getMilliOfYear();
+    let value = milliOfYear - getEquinoxOffsetMillis();
+    if(milliOfYear < getEquinoxOffsetMillis()){
+        let tmp = (365 - getEquinoxOffsetDays()) * millisPerSecond;
+        value = milliOfYear + tmp;
+    }
+    
     if(log){
         console.log('Current milli of year: ',value);
     }
@@ -176,7 +191,7 @@ function calculateOHareanDate(){
         }
     }
     let dayOfWeek = dayOfSeason - (weekOfSeason*daysPerWeek);
-    let year = getCurrentTime().getFullYear() + 10000;
+    let year = getYear();
     let date = {
         year: year,
         season: {
@@ -192,4 +207,13 @@ function calculateOHareanDate(){
 function getSeason(x){
     let seasonList = ['Ineo','Cresco','Vigeo','Cado','Abeo']
     return seasonList[x];
+}
+
+function getYear(){
+    let year = getCurrentTime().getFullYear();
+    if(getMilliOfYear() < getEquinoxOffsetMillis()){
+        year--;
+    }
+    year += 10000;
+    return year;
 }
