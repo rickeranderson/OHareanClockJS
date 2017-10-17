@@ -25,8 +25,7 @@ function start() {
 
 function getCurrentTime(){
     let date = new Date();
-    date.setMonth(1);
-    date.setFullYear(2018);
+
     return date;
 }
 
