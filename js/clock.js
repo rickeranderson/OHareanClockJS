@@ -17,7 +17,6 @@ function start() {
     let dateTime = currentOhareanTime();
     timeElement.innerText = convertTimeToString(dateTime);
     dateElement.innerText = convertDateToString(dateTime);
-    // getCurrentDayOfYear();
     setInterval(function(){
         updateAll();
     }, 1);
